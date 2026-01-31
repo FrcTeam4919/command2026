@@ -30,6 +30,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
@@ -119,7 +120,7 @@ public class DriveTrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    SignalLogger.enableAutoLogging(false);
    // LimelightHelpers.LimelightResults results = LimelightHelpers.getLatestResults("limelight");
     // update odometry
     m_odometry.update(
