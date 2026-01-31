@@ -98,5 +98,8 @@ public final class Constants {
     public static final int kRFturn = 14;
     public static final int kRBturn = 15;
   }
+ public static class Motorconstants{
+
+ } 
 
 }
