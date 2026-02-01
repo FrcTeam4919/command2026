@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 public class Shooter extends SubsystemBase {
-  WPI_VictorSPX LaunchOne = new WPI_VictorSPX(0);
-  WPI_VictorSPX LaunchTwo = new WPI_VictorSPX(1);
+  WPI_VictorSPX LaunchR = new WPI_VictorSPX(0);
+  WPI_VictorSPX LaunchL = new WPI_VictorSPX(1);
   /** Creates a new ExampleSubsystem. */
   public Shooter() {}
 
@@ -17,22 +17,22 @@ public class Shooter extends SubsystemBase {
  
 //shoot ball
   public void fire(){
-   LaunchOne.set(1);
-    LaunchTwo.set(1);
+   LaunchR.set(1);
+    LaunchL.set(1);
   }
   //just in case
   public void HalfFire(){
-   LaunchOne.set(0.5);
-    LaunchTwo.set(0.5);
+   LaunchR.set(0.5);
+    LaunchL.set(0.5);
   }
   public void reversefire(){
-   LaunchOne.set(-1);
-    LaunchTwo.set(-1);
+   LaunchR.set(-1);
+    LaunchL.set(-1);
   }
   //stop shooting
   public void stop(){
-   LaunchOne.set(0);
-    LaunchTwo.set(0);
+   LaunchR.set(0);
+    LaunchL.set(0);
   }
 
   @Override

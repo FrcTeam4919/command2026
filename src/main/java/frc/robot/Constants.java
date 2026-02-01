@@ -99,7 +99,11 @@ public final class Constants {
     public static final int kRBturn = 15;
   }
  public static class Motorconstants{
-
+  // motor IDs
+    public static final int loadMotor= 0;
+    public static final int PickupMotor = 1;
+    public static final int ShootMotorR = 2;
+    public static final int ShootMotorL = 3;
  } 
 
 }

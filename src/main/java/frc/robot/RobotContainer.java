@@ -17,6 +17,16 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Loader;
+import frc.robot.subsystems.Pickup;
+import frc.robot.subsystems.Shooter;
+
+import frc.robot.commands.ReLoad;
+import frc.robot.commands.DeStick;
+import frc.robot.commands.Eat;
+import frc.robot.commands.Spit;
+import frc.robot.commands.Fire;
+
 import frc.robot.Constants.DriveConstants;
 
 /**
@@ -36,9 +46,16 @@ public class RobotContainer {
       //subsystems 
 
       private final DriveTrain m_robotDrive = new DriveTrain();
-
+      private final Loader m_loader = new Loader();
+      private final Pickup m_pickup = new Pickup();
+      private final Shooter m_shooter = new Shooter();
 
       //Commands
+      private final ReLoad m_reLoad = new ReLoad(m_loader);
+       private final DeStick m_deStick = new DeStick(m_loader);
+       private final Eat m_eat = new Eat(m_pickup);
+       private final Spit m_spit = new Spit(m_pickup);
+       private final Fire m_fire = new Fire(m_shooter);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
