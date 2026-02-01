@@ -173,10 +173,11 @@ public class DriveTrain extends SubsystemBase {
       if(!doRejectUpdate)
       {
         //System.out.println("Update successful");
-        m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
+        m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
         m_odometry.addVisionMeasurement(
             mt1.pose,
             mt1.timestampSeconds);
+            System.out.println("m_odometry added");
       }
     }
    /* 
@@ -393,7 +394,7 @@ public class DriveTrain extends SubsystemBase {
   public void simulationPeriodic() {
 
     m_field.setRobotPose(m_odometry.getEstimatedPosition());
-    
+    System.out.println("m_field updated to odometry");
     // This method will be called once per scheduler run during simulation
 
    // topRightAngle.append(m_frontRight.getAngle());
