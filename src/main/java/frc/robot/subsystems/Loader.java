@@ -18,10 +18,10 @@ public class Loader extends SubsystemBase {
    * @return a command
    */
   public void reload(){
-    load.set(1);
+    load.set(0.5);
   }
   //just in case
-  public void destick(){
+  public void deStick(){
     load.set(-1);
   }
   public void stop(){
