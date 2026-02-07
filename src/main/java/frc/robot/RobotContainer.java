@@ -104,12 +104,7 @@ public class RobotContainer {
     m_driverController.leftTrigger(0.7).whileTrue(m_eat);
 
     m_driverController.rightTrigger(0.7).whileTrue(m_fire);
-    if(m_driverController.rightTrigger().getAsBoolean()){
-    m_driverController.setRumble(GenericHID.RumbleType.kRightRumble, 1);
-   }
-   else{
-    m_driverController.setRumble(GenericHID.RumbleType.kRightRumble, 0);
-   }
+    
     m_driverController.leftBumper().whileTrue(m_reLoad);
 
     m_driverController.y().whileTrue(m_deStick);
