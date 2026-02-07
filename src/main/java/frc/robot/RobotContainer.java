@@ -48,7 +48,7 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
-      private final GenericHID m_board = new GenericHID(1);
+      //
       //subsystems 
 
       private final DriveTrain m_robotDrive = new DriveTrain();
@@ -62,8 +62,7 @@ public class RobotContainer {
        private final Eat m_eat = new Eat(m_pickup);
        private final Spit m_spit = new Spit(m_pickup);
        private final Fire m_fire = new Fire(m_shooter);
-       //buttons 
-       private JoystickButton rload = new JoystickButton(m_board, 0);
+       //buttons
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
