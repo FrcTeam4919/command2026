@@ -22,7 +22,7 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.PersistMode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.swerve.SimSwerveDrivetrain.SimSwerveModule;
+import com.ctre.phoenix6.swerve.SimSwerveDrivetrain;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
