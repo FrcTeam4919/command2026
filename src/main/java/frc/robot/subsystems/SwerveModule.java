@@ -6,6 +6,9 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.subsystems.SwerveModule.SimGyro;
+import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.FeedbackSensor;
@@ -19,17 +22,30 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.PersistMode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.swerve.SimSwerveDrivetrain.SimSwerveModule;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 //import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class SwerveModule extends SubsystemBase {
   /** Creates a new Swerve Module Subsystem. */
+  private final SimSwerveModule[] modules;
+  private final SwerveDriveKinematics kinematics;
+  private final SwerveDriveOdometry odometry;
+  private SimGyro gyro;
 
   private final SparkMax m_driveMotor;
   private final SparkMax m_turningMotor;
@@ -63,6 +79,23 @@ public class SwerveModule extends SubsystemBase {
     int turningMotorChannel,
     int turningEncoderChannel,
     double moduleEncoderAngularOffset) {
+
+      modules = new SimSwerveModule[]{
+      new SimSwerveModule(),
+      new SimSwerveModule(),
+      new SimSwerveModule(),
+      new SimSwerveModule()
+    };
+
+      
+      gyro = new SimGyro();
+      kinematics = new SwerveDriveKinematics(
+      Constants.DriveConstants.flModuleOffset, 
+      Constants.DriveConstants.frModuleOffset, 
+      Constants.DriveConstants.blModuleOffset, 
+      Constants.DriveConstants.brModuleOffset
+    );
+       odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getPositions());
 
     //setup driving motor info
     m_driveMotorConfig.encoder
@@ -104,6 +137,70 @@ public class SwerveModule extends SubsystemBase {
     m_desiredState.angle = getAngle();//new Rotation2d(m_CANcoder.getPosition().getValue());
     //m_driveEncoder.setPosition(0);
     resetEncoders();
+
+    try{
+      RobotConfig config = RobotConfig.fromGUISettings();
+
+      // Configure AutoBuilder
+      AutoBuilder.configure(
+        this::getPose, 
+        this::resetPose, 
+        this::getSpeeds, 
+        this::driveRobotRelative, 
+        new PPHolonomicDriveController(
+          Constants.DriveConstants.translationConstants,
+          Constants.DriveConstants.rotationConstants
+        ),
+        config,
+        () -> {
+            // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // This will flip the path being followed to the red side of the field.
+            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+            }
+            return false;
+        },
+        this
+      );
+    }catch(Exception e){
+      DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", e.getStackTrace());
+    }
+    
+  }
+
+public Pose2d getPose() {
+    return odometry.getPoseMeters();
+  }
+
+  public void resetPose(Pose2d pose) {
+    System.out.println(pose);
+    odometry.resetPosition(gyro.getRotation2d(), getPositions(), pose);
+  }
+
+  public ChassisSpeeds getSpeeds() {
+    return kinematics.toChassisSpeeds(getModuleStates());
+  }
+
+  public void driveFieldRelative(ChassisSpeeds fieldRelativeSpeeds) {
+    driveRobotRelative(ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelativeSpeeds, getPose().getRotation()));
+  }
+
+  public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {
+    ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
+
+    SwerveModuleState[] targetStates = kinematics.toSwerveModuleStates(targetSpeeds);
+    setStates(targetStates);
+  }
+
+  public void setStates(SwerveModuleState[] targetStates) {
+    SwerveDriveKinematics.desaturateWheelSpeeds(targetStates, Constants.DriveConstants.kMaxSpeed);
+
+    for (int i = 0; i < modules.length; i++) {
+      modules[i].setTargetState(targetStates[i]);
+    }
   }
 
   /**
@@ -224,4 +321,53 @@ public class SwerveModule extends SubsystemBase {
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
   }
+  
+  public SwerveModuleState[] getModuleStates() {
+    SwerveModuleState[] states = new SwerveModuleState[modules.length];
+    for (int i = 0; i < modules.length; i++) {
+      states[i] = modules[i].getState();
+    }
+    return states;
+  }
+
+    public SwerveModulePosition[] getPositions() {
+    SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
+    for (int i = 0; i < modules.length; i++) {
+      positions[i] = modules[i].getPosition();
+    }
+    return positions;
+  }
+
+  class SimSwerveModule {
+    private SwerveModulePosition currentPosition = new SwerveModulePosition();
+    private SwerveModuleState currentState = new SwerveModuleState();
+
+    public SwerveModulePosition getPosition() {
+      return currentPosition;
+    }
+
+    public SwerveModuleState getState() {
+      return currentState;
+    }
+
+    public void setTargetState(SwerveModuleState targetState) {
+      // Optimize the state
+      currentState = SwerveModuleState.optimize(targetState, currentState.angle);
+
+      currentPosition = new SwerveModulePosition(currentPosition.distanceMeters + (currentState.speedMetersPerSecond * 0.02), currentState.angle);
+    }
+  }
+
+  class SimGyro {
+    private Rotation2d currentRotation = new Rotation2d();
+
+    public Rotation2d getRotation2d() {
+      return currentRotation;
+    }
+
+    public void updateRotation(double angularVelRps){
+      currentRotation = currentRotation.plus(new Rotation2d(angularVelRps * 0.02));
+    }
+  }
+
 }
