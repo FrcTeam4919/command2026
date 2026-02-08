@@ -28,6 +28,7 @@ public class Fire extends Command {
   @Override
   public void initialize() {
      m_shooter.fire();
+     System.out.println("Fire is called");
   }
    
   // Called every time the scheduler runs while the command is scheduled.
