@@ -4,11 +4,12 @@
 
 package frc.robot.subsystems;
 
+import frc.robot.Constants.Motorconstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 public class Loader extends SubsystemBase {
-   WPI_VictorSPX load = new WPI_VictorSPX(3);
+   WPI_VictorSPX load = new WPI_VictorSPX(Motorconstants.loadMotor);
   /** Creates a new ExampleSubsystem. */
   public Loader() {}
 
