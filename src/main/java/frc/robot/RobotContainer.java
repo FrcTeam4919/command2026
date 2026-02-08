@@ -101,7 +101,7 @@ public class RobotContainer {
                  
           );
 
-           autoChooser = AutoBuilder.buildAutoChooser("ShootNload");
+           autoChooser = AutoBuilder.buildAutoChooser("ShootNload.auto");
            
   }
 
