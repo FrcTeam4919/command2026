@@ -6,7 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.subsystems.SwerveModule.SimGyro;
+//import frc.robot.subsystems.SwerveModule.SimGyro;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 
@@ -18,6 +18,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
 import com.revrobotics.ResetMode;
 import com.revrobotics.PersistMode;
 import com.ctre.phoenix6.StatusSignal;
@@ -45,7 +47,8 @@ public class SwerveModule extends SubsystemBase {
   private final SimSwerveModule[] modules;
   private final SwerveDriveKinematics kinematics;
   private final SwerveDriveOdometry odometry;
-  private SimGyro gyro;
+  //private SimGyro gyro;
+  private final AHRS m_imu = new AHRS(NavXComType.kMXP_SPI);
 
   private final SparkMax m_driveMotor;
   private final SparkMax m_turningMotor;
@@ -88,14 +91,14 @@ public class SwerveModule extends SubsystemBase {
     };
 
       
-      gyro = new SimGyro();
+      //gyro = new SimGyro();
       kinematics = new SwerveDriveKinematics(
       Constants.DriveConstants.flModuleOffset, 
       Constants.DriveConstants.frModuleOffset, 
       Constants.DriveConstants.blModuleOffset, 
       Constants.DriveConstants.brModuleOffset
     );
-       odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getPositions());
+       odometry = new SwerveDriveOdometry(kinematics, m_imu.getRotation2d(), getPositions());
 
     //setup driving motor info
     m_driveMotorConfig.encoder
@@ -177,7 +180,7 @@ public Pose2d getPose() {
 
   public void resetPose(Pose2d pose) {
     System.out.println(pose);
-    odometry.resetPosition(gyro.getRotation2d(), getPositions(), pose);
+    odometry.resetPosition(m_imu.getRotation2d(), getPositions(), pose);
   }
 
   public ChassisSpeeds getSpeeds() {
@@ -358,7 +361,7 @@ public Pose2d getPose() {
     }
   }
 
-  class SimGyro {
+  /*class SimGyro {
     private Rotation2d currentRotation = new Rotation2d();
 
     public Rotation2d getRotation2d() {
@@ -368,6 +371,6 @@ public Pose2d getPose() {
     public void updateRotation(double angularVelRps){
       currentRotation = currentRotation.plus(new Rotation2d(angularVelRps * 0.02));
     }
-  }
+  } */
 
 }
