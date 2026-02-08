@@ -116,7 +116,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-     SmartDashboard.putData("Right start to shoot", new PathPlannerAuto("Right start to shoot"));
+     SmartDashboard.putData("ShootNload", new PathPlannerAuto("ShootNload"));
 
      SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
       new Pose2d(14.0, 6.5, Rotation2d.fromDegrees(0)), 
