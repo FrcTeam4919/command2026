@@ -64,7 +64,7 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
-      private final GenericHID m_board = new GenericHID(1);
+      //
       //subsystems 
 
       private final DriveTrain m_robotDrive = new DriveTrain();
@@ -78,8 +78,7 @@ public class RobotContainer {
        private final Eat m_eat = new Eat(m_pickup);
        private final Spit m_spit = new Spit(m_pickup);
        private final Fire m_fire = new Fire(m_shooter);
-       //buttons 
-       private JoystickButton rload = new JoystickButton(m_board, 0);
+       //buttons
 
        private final SendableChooser<Command> autoChooser;
 
@@ -132,9 +131,15 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    m_driverController.b().whileTrue(m_spit);
 
-    m_driverController.a().whileTrue(m_eat);
+    m_driverController.leftTrigger(0.7).whileTrue(m_eat);
+
+    m_driverController.rightTrigger(0.7).whileTrue(m_fire);
+    
+    m_driverController.leftBumper().whileTrue(m_reLoad);
+
+    m_driverController.y().whileTrue(m_deStick);
 
 
   }
