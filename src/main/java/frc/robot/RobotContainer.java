@@ -12,12 +12,28 @@ import frc.robot.subsystems.ExampleSubsystem;
 
 import org.littletonrobotics.conduit.schema.Joystick;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.events.EventTrigger;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
+
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -64,11 +80,14 @@ public class RobotContainer {
        private final Fire m_fire = new Fire(m_shooter);
        //buttons
 
+       private final SendableChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+
+   
      //Configure driving default
       m_robotDrive.setDefaultCommand(
         // Forward motion controls x speed (forward), sideways motion controls y speed (sideways).
@@ -80,6 +99,9 @@ public class RobotContainer {
               DriveConstants.kTeleField), m_robotDrive)
                  
           );
+
+           autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Mode", autoChooser);
   }
 
   /**
@@ -93,6 +115,17 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
+     SmartDashboard.putData("test fire", new PathPlannerAuto("test fire"));
+
+     SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
+      new Pose2d(14.0, 6.5, Rotation2d.fromDegrees(0)), 
+      new PathConstraints(
+        4.0, 4.0, 
+        Units.degreesToRadians(360), Units.degreesToRadians(540)
+      ), 
+      0
+    ));
+
     new Trigger(m_exampleSubsystem::exampleCondition)
         .onTrue(new ExampleCommand(m_exampleSubsystem));
 
@@ -118,6 +151,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    
+    return autoChooser.getSelected();
   }
 }

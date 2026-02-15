@@ -3,6 +3,8 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
+import com.pathplanner.lib.config.PIDConstants;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
@@ -51,6 +53,15 @@ public final class Constants {
   }
 
   public static class DriveConstants {
+
+    public static final Translation2d flModuleOffset = new Translation2d(0.546 / 2.0, 0.546 / 2.0);
+    public static final Translation2d frModuleOffset = new Translation2d(0.546 / 2.0, -0.546 / 2.0);
+    public static final Translation2d blModuleOffset = new Translation2d(-0.546 / 2.0, 0.546 / 2.0);
+    public static final Translation2d brModuleOffset = new Translation2d(-0.546 / 2.0, -0.546 / 2.0);
+    public static final PIDConstants translationConstants = new PIDConstants(5.0, 0.0, 0.0);
+    public static final PIDConstants rotationConstants = new PIDConstants(5.0, 0.0, 0.0);
+    
+
     public static final double robotWidth = Units.inchesToMeters(37.0);
     public static final double robotLength = Units.inchesToMeters(37.0);
     public static final double WheelYdist = robotLength*0.5;
@@ -66,6 +77,7 @@ public final class Constants {
       new Translation2d(WheelXdist, -WheelYdist),
       new Translation2d(-WheelXdist, WheelYdist),
       new Translation2d(-WheelXdist, -WheelYdist));*/
+
 
     // encoder angluar offset 
     public static final double kFrontLeftModuleAngularOffset = 0.295654;//*360;//Math.PI*2; 
