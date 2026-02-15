@@ -7,8 +7,9 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import frc.robot.Constants.Motorconstants; 
 public class Pickup extends SubsystemBase {
-   WPI_VictorSPX Grasper = new WPI_VictorSPX(3);
+   WPI_VictorSPX Grasper = new WPI_VictorSPX(Motorconstants.PickupMotor);
   /** Creates a new ExampleSubsystem. */
   public Pickup() {}
 
