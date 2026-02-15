@@ -112,10 +112,10 @@ public final class Constants {
   }
  public static class Motorconstants{
   // motor IDs
-    public static final int loadMotor= 0;
-    public static final int PickupMotor = 1;
-    public static final int ShootMotorR = 2;
-    public static final int ShootMotorL = 3;
+    public static final int loadMotor= 5;
+    public static final int PickupMotor = 6;
+    public static final int ShootMotorR = 20;
+    public static final int ShootMotorL = 10;
  } 
 
 }
