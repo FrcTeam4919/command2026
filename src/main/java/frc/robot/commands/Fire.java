@@ -7,7 +7,6 @@ package frc.robot.commands;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 /** An example command that uses an example subsystem. */
 public class Fire extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")

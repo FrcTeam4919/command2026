@@ -33,7 +33,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -138,10 +140,7 @@ public class RobotContainer {
     m_driverController.leftTrigger(0.7).whileTrue(m_spit);
 
     m_driverController.rightTrigger(0.7).whileTrue(m_eat);
-    
-    m_driverController.leftBumper().whileTrue(m_reLoad);
 
-    m_driverController.y().whileTrue(m_deStick);
     m_GunnerStick.button(1).toggleOnTrue(m_fire);
 
     m_GunnerStick.button(2).whileTrue(m_reLoad);

@@ -24,7 +24,9 @@ public class ExampleSubsystem extends SubsystemBase {
           /* one-time action goes here */
         });
   }
-
+public void on(){
+  
+};
   /**
    * An example method querying a boolean state of the subsystem (for example, a digital sensor).
    *
