@@ -142,7 +142,13 @@ public class RobotContainer {
     m_driverController.rightTrigger(0.7).whileTrue(m_eat);
 
     m_GunnerStick.button(1).toggleOnTrue(m_fire);
-
+if(m_GunnerStick.button(1).getAsBoolean()){
+    m_driverController.setRumble(GenericHID.RumbleType.kLeftRumble, 0.5);
+   }
+   else{
+    m_driverController.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+   }
+   
     m_GunnerStick.button(2).whileTrue(m_reLoad);
 
     m_GunnerStick.button(5).whileTrue(m_deStick);
