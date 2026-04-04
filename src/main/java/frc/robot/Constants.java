@@ -45,7 +45,7 @@ public final class Constants {
     public static final double turnGainI = 0.00001;
     public static final double turnGainD = 0.01;
 
-    public static final double kAngleEncoderResolution = 42;
+    public static final double kAngleEncoderResolution = 5.2;
     public static final boolean kTurningEncoderInverted = true;
    // public static final double kTurningMinOutput = -0.1;
     //public static final double kTurningMaxOutput = 0.1;
@@ -59,8 +59,8 @@ public final class Constants {
     public static final Translation2d frModuleOffset = new Translation2d(0.546 / 2.0, -0.546 / 2.0);
     public static final Translation2d blModuleOffset = new Translation2d(-0.546 / 2.0, 0.546 / 2.0);
     public static final Translation2d brModuleOffset = new Translation2d(-0.546 / 2.0, -0.546 / 2.0);
-    public static final PIDConstants translationConstants = new PIDConstants(5.0, 0.0, 0.0);
-    public static final PIDConstants rotationConstants = new PIDConstants(5.0, 0.0, 0.0);
+    public static final PIDConstants translationConstants = new PIDConstants(4.0, 0.0, 1.0);
+    public static final PIDConstants rotationConstants = new PIDConstants(4, 0.0, 1.0);
     
 
     public static final double robotWidth = 0.622;
@@ -83,15 +83,15 @@ public final class Constants {
 
 
     // encoder angluar offset 
-    public static final double kFrontLeftModuleAngularOffset = 0.295654;//*360;//Math.PI*2; 
-    public static final double kFrontRightModuleAngularOffset = -.463135;//*360;//Math.PI*2;
-    public static final double kBackLeftModuleAngularOffset = -0.054932;//*360;//Math.PI*2;
-    public static final double kBackRightModuleAngularOffset = 0.187988;//*360;//Math.PI*2;
+    public static final double kFrontLeftModuleAngularOffset = 0;//-0.2978515625;//*360;//Math.PI*2; 
+    public static final double kFrontRightModuleAngularOffset =0; //0.441162109375;//*360;//Math.PI*2;
+    public static final double kBackLeftModuleAngularOffset = 0;//0.064208984375;//*360;//Math.PI*2;
+    public static final double kBackRightModuleAngularOffset = 0;//-0.180419921875;//*360;//Math.PI*2;
  
     public static final double kChassisAngularOffset = 0;
 
-    public static final double kMaxSpeed = 10;
-    public static final double kMaxAngularSpeed = 5*Math.PI;
+    public static final double kMaxSpeed = 42;
+    public static final double kMaxAngularSpeed = 10*Math.PI;
     public static final double kDriveDeadband = 0.05;
     public static final double kDriveDeadbandZ = 0.1;
     public static final boolean kTeleField = true;

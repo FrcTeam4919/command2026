@@ -5,20 +5,21 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Loader;
 import edu.wpi.first.wpilibj2.command.Command;
+
 /** An example command that uses an example subsystem. */
-public class Fire extends Command {
+public class ReLoadCon extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
-  private final Shooter m_shooter;
+  private final Loader m_loader;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Fire(Shooter subsystem) {
-    m_shooter = subsystem;
+  public ReLoadCon(Loader subsystem) {
+    m_loader = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
@@ -26,19 +27,17 @@ public class Fire extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-     m_shooter.fire();
-    // System.out.println("Fire is called");
+    m_loader.reload();
   }
-   
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
+  public void execute() {}
 
-  }
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_shooter.stop();
+   
   }
 
   // Returns true when the command should end.

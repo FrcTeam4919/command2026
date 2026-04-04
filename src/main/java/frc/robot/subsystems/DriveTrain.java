@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.LimelightHelpers;
+import frc.robot.RobotContainer;
+import frc.robot.Constants;
 import frc.robot.Constants.ControlSystem;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,20 +19,27 @@ import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
-
-
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.DriveFeedforwards;
+import com.revrobotics.spark.config.FeedForwardConfig;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
@@ -44,10 +53,15 @@ public class DriveTrain extends SubsystemBase {
   private final Field2d m_field = new Field2d();
   /** Creates a new Drive Train Subsystem. */
 
+  
+
+
   private final Translation2d m_frontLeftLocation = new Translation2d(DriveConstants.WheelXdist, DriveConstants.WheelYdist);
   private final Translation2d m_frontRightLocation = new Translation2d(DriveConstants.WheelXdist, -DriveConstants.WheelYdist);
   private final Translation2d m_backLeftLocation = new Translation2d(-DriveConstants.WheelXdist, DriveConstants.WheelYdist);
   private final Translation2d m_backRightLocation = new Translation2d(-DriveConstants.WheelXdist, -DriveConstants.WheelYdist);
+
+  private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
   private final SwerveModule m_frontLeft= new SwerveModule(
     ControlSystem.kLeftFrontDrive,
@@ -78,6 +92,43 @@ public class DriveTrain extends SubsystemBase {
     //DriveConstants.kBackRightChassisAngularOffset);
 
 
+public void configureAutoBuilder() {
+    try{
+      RobotConfig config = RobotConfig.fromGUISettings();
+
+      
+
+      // Configure AutoBuilder
+      AutoBuilder.configure(
+        m_odometry::getEstimatedPosition, 
+        m_odometry::resetPose, 
+        RobotContainer::getSpeeds,
+         this::DriveRobotRelativeWithRequest,
+        
+        new PPHolonomicDriveController(
+          Constants.DriveConstants.translationConstants,
+          Constants.DriveConstants.rotationConstants
+        ),
+        config,
+        () -> {
+            // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // This will flip the path being followed to the red side of the field.
+            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+            }
+            return false;
+        },
+        this
+      );
+    }catch(Exception e){
+      DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", e.getStackTrace());
+    }
+    
+  }
+
   //private final ADIS16448_IMU m_imu = new ADIS16448_IMU();
   // Might be a point of error, hope for the best though.
   private final AHRS m_imu = new AHRS(NavXComType.kMXP_SPI);
@@ -102,7 +153,7 @@ public class DriveTrain extends SubsystemBase {
 
     
         
-  private final SwerveDrivePoseEstimator m_odometry =
+  public final SwerveDrivePoseEstimator m_odometry =
     new SwerveDrivePoseEstimator(
       m_kinematics,
       new Rotation2d(-m_imu.getAngle()*Math.PI/180),
@@ -116,10 +167,31 @@ public class DriveTrain extends SubsystemBase {
       );
 
   public DriveTrain() {}
+
+  public void DriveRobotRelative(ChassisSpeeds robotReletiveSpeeds){
+   m_frontLeft.driveRobotRelative(robotReletiveSpeeds);
+   m_frontRight.driveRobotRelative(robotReletiveSpeeds);
+   m_backLeft.driveRobotRelative(robotReletiveSpeeds);
+   m_backRight.driveRobotRelative(robotReletiveSpeeds);
+
+    
+  }
+
+  public void DriveRobotRelativeWithRequest(ChassisSpeeds robotRelativeSpeeds, DriveFeedforwards feedforwards) {
+    m_pathApplyRobotSpeeds.withSpeeds(robotRelativeSpeeds)
+            .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+            .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons());
+    
+    m_frontLeft.driveRobotRelative(m_pathApplyRobotSpeeds.Speeds);
+   m_frontRight.driveRobotRelative(m_pathApplyRobotSpeeds.Speeds);
+   m_backLeft.driveRobotRelative(m_pathApplyRobotSpeeds.Speeds);
+   m_backRight.driveRobotRelative(m_pathApplyRobotSpeeds.Speeds);
+  }
   
 
   @Override
   public void periodic() {
+    
     SignalLogger.enableAutoLogging(false);
    // LimelightHelpers.LimelightResults results = LimelightHelpers.getLatestResults("limelight");
     // update odometry
@@ -136,15 +208,16 @@ public class DriveTrain extends SubsystemBase {
     boolean doRejectUpdate = false;
     //if(useMegaTag2 == false)
         //System.out.println("Limelight code run");
-      LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+      LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-ronin");
        Double[] mt1Pos =  {(mt1.pose.getX()),(mt1.pose.getY()),(mt1.pose.getRotation().getDegrees())};
       if(mt1 != null){
         //System.out.println("mt1 not null");
       if(mt1.tagCount == 1 && mt1.rawFiducials.length == 1)
       {
             MTOne = true;
-            System.out.println("tagcount==1");
+            //System.out.println("tagcount==1");
 
+            //System.out.println("mt1 is 1");
         if(mt1.rawFiducials[0].ambiguity > .7)
         {
           doRejectUpdate = true;
@@ -163,14 +236,17 @@ public class DriveTrain extends SubsystemBase {
 
       if(!doRejectUpdate)
       {
-        System.out.println("Update successful");
+        //System.out.println("Update successful");
         m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
         m_odometry.addVisionMeasurement(
             mt1.pose,
             mt1.timestampSeconds);
-            System.out.println("m_odometry added");
+            //System.out.println("m_odometry added");
       }
     }
+    
+    m_field.setRobotPose(m_odometry.getEstimatedPosition());
+    //System.out.println("m_field updated to odometry");
    
     // if mt1 is more than 0 
     SmartDashboard.putBoolean("MT1 = one", MTOne);
@@ -364,14 +440,12 @@ public class DriveTrain extends SubsystemBase {
     m_frontRight.DriveStop();
   }
 
-  @Override
-  public void simulationPeriodic() {
+  // @Override
+  // public void periodic() {
 
-    m_field.setRobotPose(m_odometry.getEstimatedPosition());
-    System.out.println("m_field updated to odometry");
-    // This method will be called once per scheduler run during simulation
+  //   // This method will be called once per scheduler run during simulation
 
-   // topRightAngle.append(m_frontRight.getAngle());
-  }
+  //  // topRightAngle.append(m_frontRight.getAngle());
+  // }
   
 }

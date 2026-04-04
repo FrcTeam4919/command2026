@@ -19,17 +19,19 @@ public class Shooter extends SubsystemBase {
  
 //shoot ball
   public void fire(){
-   LaunchR.set(0.535);
-    LaunchL.set(0.535);
+   LaunchR.set(1);
+    LaunchL.set(1);
+  //  System.out.println("Fire run");
   }
   //just in case
-  public void HalfFire(){
-   LaunchR.set(0.5);
-    LaunchL.set(0.5);
+  public void Fullfire(){
+   LaunchR.set(1);
+    LaunchL.set(1);
+    //System.out.println("Fire run");
   }
   public void reversefire(){
-   LaunchR.set(-1);
-    LaunchL.set(-1);
+   LaunchR.set(-0.1);
+    LaunchL.set(-0.1);
   }
   //stop shooting
   public void stop(){

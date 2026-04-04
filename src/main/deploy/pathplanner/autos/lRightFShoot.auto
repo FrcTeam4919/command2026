@@ -7,53 +7,35 @@
         {
           "type": "path",
           "data": {
-            "pathName": "rightToLShoot"
+            "pathName": "RightToLFarShoot"
           }
         },
         {
-          "type": "sequential",
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "FireCon"
+                  "name": "FullFire"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "ReLoadCon"
+                  "name": "ReLoad"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "EatCon"
+                  "name": "Eat"
                 }
               },
               {
                 "type": "wait",
                 "data": {
                   "waitTime": 5.0
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "FireEnd"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ReloadEnd"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "EatEnd"
                 }
               }
             ]
@@ -63,6 +45,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "CloseShooting",
+  "folder": "FarShooting",
   "choreoAuto": false
 }

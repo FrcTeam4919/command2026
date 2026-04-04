@@ -81,7 +81,8 @@ BooleanLogEntry myBooleanLog;
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      CommandScheduler.getInstance().schedule(m_autonomousCommand);
+      System.out.println("auto exists!");
+      m_autonomousCommand.schedule();
      
     }
   }

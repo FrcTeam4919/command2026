@@ -11,25 +11,49 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Fire"
+                  "name": "FireCon"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "ReLoad"
+                  "name": "ReLoadCon"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "EatCon"
                 }
               },
               {
                 "type": "wait",
                 "data": {
                   "waitTime": 5.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "FireEnd"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ReloadEnd"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "EatEnd"
                 }
               }
             ]
@@ -39,6 +63,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "CloseShooting",
   "choreoAuto": false
 }

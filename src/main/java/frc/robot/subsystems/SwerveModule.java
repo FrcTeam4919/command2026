@@ -108,6 +108,7 @@ public class SwerveModule extends SubsystemBase {
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       .pid(SwerveConstants.driveGainP, SwerveConstants.driveGainI, SwerveConstants.driveGainD);
     m_driveMotor = new SparkMax(driveMotorChannel, MotorType.kBrushless);
+    m_driveMotorConfig.smartCurrentLimit(40);
     m_driveMotor.configure(m_driveMotorConfig, ResetMode.valueOf("kNoResetSafeParameters"), PersistMode.valueOf("kPersistParameters"));
 
     m_driveMotorChannel = driveMotorChannel; //for debugging
@@ -126,6 +127,7 @@ public class SwerveModule extends SubsystemBase {
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       .pid(SwerveConstants.turnGainP, SwerveConstants.turnGainI, SwerveConstants.turnGainD);
     m_turningMotor = new SparkMax(turningMotorChannel, MotorType.kBrushless);
+    m_turningMotorConfig.smartCurrentLimit(30);
     m_turningMotor.configure(m_turningMotorConfig, ResetMode.valueOf("kNoResetSafeParameters"), PersistMode.valueOf("kPersistParameters"));
 
     m_turnEncoder = m_turningMotor.getEncoder();
@@ -140,39 +142,8 @@ public class SwerveModule extends SubsystemBase {
     m_desiredState.angle = getAngle();//new Rotation2d(m_CANcoder.getPosition().getValue());
     //m_driveEncoder.setPosition(0);
     resetEncoders();
-
-    try{
-      RobotConfig config = RobotConfig.fromGUISettings();
-
-      // Configure AutoBuilder
-      AutoBuilder.configure(
-        this::getPose, 
-        this::resetPose, 
-        this::getSpeeds, 
-        this::driveRobotRelative, 
-        new PPHolonomicDriveController(
-          Constants.DriveConstants.translationConstants,
-          Constants.DriveConstants.rotationConstants
-        ),
-        config,
-        () -> {
-            // Boolean supplier that controls when the path will be mirrored for the red alliance
-            // This will flip the path being followed to the red side of the field.
-            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-            var alliance = DriverStation.getAlliance();
-            if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-            }
-            return false;
-        },
-        this
-      );
-    }catch(Exception e){
-      DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", e.getStackTrace());
-    }
-    
   }
+    
 
 public Pose2d getPose() {
     return odometry.getPoseMeters();
